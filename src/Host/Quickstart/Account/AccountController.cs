@@ -3,7 +3,6 @@
 
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
-using IdentityServer4.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
