@@ -9,6 +9,7 @@ namespace IdentityServer.Host.Configuration
         public string CertificateFileName { get; set; }
         public string CertificatePassword { get; set; }
         public IEnumerable<Client> Clients { get; set; }
+        public IEnumerable<IdentityResource> IdentityResources { get; set; }
     }
 }
 

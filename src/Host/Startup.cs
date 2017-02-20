@@ -17,7 +17,6 @@ namespace Host
     {
         public IConfigurationRoot Configuration { get; }
         public IdentityServerRuntimeOptions IdentityServerOptions { get; }
-//        public IdentityServerRuntimeData IdentityServerRuntimeData { get; }
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -54,6 +53,7 @@ namespace Host
             }
 
             builder.AddInMemoryClients(IdentityServerOptions.Clients);
+            builder.AddInMemoryIdentityResources(IdentityServerOptions.IdentityResources);
 
             services.AddMvc();
         }
@@ -70,6 +70,11 @@ namespace Host
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
+                AuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme,
+            });
 
             app.UseIdentityServer();
 
