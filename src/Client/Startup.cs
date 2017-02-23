@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 namespace Client
 {
@@ -76,6 +77,14 @@ namespace Client
                 {
                     NameClaimType = "name"
                 },
+                Events = new OpenIdConnectEvents
+                {
+                    OnRedirectToIdentityProvider = ctx =>
+                    {
+                        //ctx.ProtocolMessage.Parameters.Add("userId", "bob");
+                        return Task.FromResult(0);
+                    }
+                }
             });
             app.UseMvc(routes =>
             {

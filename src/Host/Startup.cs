@@ -11,6 +11,7 @@ using IdentityServer.Host;
 using System.Security.Cryptography.X509Certificates;
 using IdentityServer4;
 using IdentityServer4.Models;
+using Host.HttpAuthentication;
 
 namespace Host
 {
@@ -48,7 +49,9 @@ namespace Host
                 .AddInMemoryIdentityResources(new IdentityResource[] {
                     new IdentityResources.OpenId(),
                     new IdentityResources.Profile()
-                });
+                })
+                // TODO:kCura discuss if this should be config-based?
+                .AddCustomAuthorizeRequestValidator<CustomHttpAuthentication>();
 
             // TODO:kCura discuss
             if (IdentityServerOptions.CertificateFileName != null)
