@@ -1,8 +1,28 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Authentication
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<h2>@ViewData["Title"].</h2>
-<h3>@ViewData["Message"]</h3>
+<h1>Client Home Page</h1>
 
-<p>This is the home page.</p>
+@{ 
+    var user = Context.User;
+    if (user != null && user.Identity.IsAuthenticated)
+    {
+        var id_token = await Context.Authentication.GetTokenAsync("id_token");
+        <h2>Claims</h2>
+        <dl>
+            @if(id_token != null)
+            {
+                <dt>id_token</dt>
+                <dd>@id_token</dd>
+            }
+            @foreach (var claim in user.Claims)
+            {
+                <dt>@claim.Type</dt>
+                <dd>@claim.Value</dd>
+            }
+        </dl>
+    }
+}

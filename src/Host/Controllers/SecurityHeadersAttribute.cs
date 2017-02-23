@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace IdentityServer4.Quickstart.UI
 {
-    // TODO:ba need this?
     public class SecurityHeadersAttribute : ActionFilterAttribute
     {
         public override void OnResultExecuting(ResultExecutingContext context)

@@ -21,10 +21,5 @@
     <DnxInvisibleContent Include="package.json" />
     <DnxInvisibleContent Include=".npmrc" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\IdentityServer4.licenseheader">
-      <Link>IdentityServer4.licenseheader</Link>
-    </Content>
-  </ItemGroup>
   <Import Project="$(VSToolsPath)\DotNet.Web\Microsoft.DotNet.Web.targets" Condition="'$(VSToolsPath)' != ''" />
 </Project>

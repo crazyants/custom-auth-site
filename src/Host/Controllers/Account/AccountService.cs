@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace IdentityServer4.Quickstart.UI
 {
+    // TODO:kCura discuss
     public class AccountService
     {
         private readonly IClientStore _clientStore;

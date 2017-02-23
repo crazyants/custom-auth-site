@@ -10,6 +10,7 @@ using IdentityServer.Host.Configuration;
 using IdentityServer.Host;
 using System.Security.Cryptography.X509Certificates;
 using IdentityServer4;
+using IdentityServer4.Models;
 
 namespace Host
 {
@@ -17,7 +18,7 @@ namespace Host
     {
         public IConfigurationRoot Configuration { get; }
         public IdentityServerRuntimeOptions IdentityServerOptions { get; }
-        public Startup(IHostingEnvironment env)
+        public Startup(IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             var builder = new ConfigurationBuilder()
              .SetBasePath(env.ContentRootPath)
@@ -26,22 +27,30 @@ namespace Host
              .AddEnvironmentVariables();
 
             Configuration = builder.Build();
+            
+            // TODO:kCura discuss config class and section names
             IdentityServerOptions = Configuration.Get<IdentityServerRuntimeOptions>(IdentityServerHostConstants.IdentityServerRuntimeOptionsSectionName);
+
+            loggerFactory.ConfigureLogging(Configuration.GetSection(IdentityServerHostConstants.LoggingSectionName));
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(IdentityServerOptions);
-
             var builder = services.
                 AddIdentityServer(ids =>
                 {
+                    // TODO:kCura discuss
                     ids.Authentication.AuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
-                    ids.Discovery.ShowClaims = false;
-                    ids.Discovery.ShowIdentityScopes = false;
-                    ids.Discovery.ShowApiScopes = false;
+                })
+                .AddInMemoryClients(new Client[] {
+                    IdentityServerOptions.kCuraIdentityServerClient
+                })
+                .AddInMemoryIdentityResources(new IdentityResource[] {
+                    new IdentityResources.OpenId(),
+                    new IdentityResources.Profile()
                 });
 
+            // TODO:kCura discuss
             if (IdentityServerOptions.CertificateFileName != null)
             {
                 var signingCertificate = new X509Certificate2(IdentityServerOptions.CertificateFileName, IdentityServerOptions.CertificatePassword);
@@ -52,16 +61,11 @@ namespace Host
                 builder.AddTemporarySigningCredential();
             }
 
-            builder.AddInMemoryClients(IdentityServerOptions.Clients);
-            builder.AddInMemoryIdentityResources(IdentityServerOptions.IdentityResources);
-
             services.AddMvc();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            loggerFactory.ConfigureLogging(Configuration.GetSection(IdentityServerHostConstants.LoggingSectionName));
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -71,6 +75,7 @@ namespace Host
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            // TODO:kCura discuss
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme,

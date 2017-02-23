@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Client
 {
@@ -42,7 +43,6 @@ namespace Client
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
             }
             else
             {
@@ -60,6 +60,8 @@ namespace Client
                 AccessDeniedPath = new PathString("/Account/Denied")
             });
 
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
             app.UseOpenIdConnectAuthentication(new OpenIdConnectOptions
             {
                 AuthenticationScheme = "oidc",
@@ -68,7 +70,8 @@ namespace Client
                 RequireHttpsMetadata = false,
                 ClientId = "kCura",
                 ResponseType = "id_token",
-                Scope = { "openid" },
+                Scope = { "openid", "profile" },
+                SaveTokens = true,
                 TokenValidationParameters = new TokenValidationParameters
                 {
                     NameClaimType = "name"

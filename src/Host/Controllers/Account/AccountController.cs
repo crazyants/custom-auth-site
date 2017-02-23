@@ -58,23 +58,20 @@ namespace IdentityServer4.Quickstart.UI
                 // simply check that username is the same as password to authenticate
                 if (model.Username == model.Password)
                 {
-                    // TODO:ba UserName as id???
                     await HttpContext.Authentication.SignInAsync(model.Username, model.Username);
-                }
-                /*    
-                    else
+                    
+                    // make sure the returnUrl is still valid, and if yes - redirect back to authorize endpoint
+                    if (_interaction.IsValidReturnUrl(model.ReturnUrl))
                     {
-                        // TODO:ba best way to get to /Home/Error page
-                        return ???
-                    } */
+                        return Redirect(model.ReturnUrl);
+                    }
 
-                // make sure the returnUrl is still valid, and if yes - redirect back to authorize endpoint
-                if (_interaction.IsValidReturnUrl(model.ReturnUrl))
-                {
-                    return Redirect(model.ReturnUrl);
+                    return Redirect("~/");
                 }
-
-                return Redirect("~/");
+                else
+                {
+                    ModelState.AddModelError("", "Invalid username or password");
+                }
             }
 
             // something went wrong, show form with error
