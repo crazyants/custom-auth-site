@@ -2,8 +2,7 @@
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Client
-    .Controllers
+namespace Client.Controllers
 {
     [AllowAnonymous]
     public class AccountController : Controller

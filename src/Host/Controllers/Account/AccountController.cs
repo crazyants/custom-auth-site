@@ -19,7 +19,6 @@ namespace IdentityServer4.Quickstart.UI
     [SecurityHeaders]
     public class AccountController : Controller
     {
-        // private readonly TestUserStore _users;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly AccountService _account;
         private readonly ILogger<AccountController> _logger;
