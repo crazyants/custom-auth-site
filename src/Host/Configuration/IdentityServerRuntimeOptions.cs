@@ -5,24 +5,27 @@ using System.Collections.Generic;
 
 namespace IdentityServer.Host.Configuration
 {
+    // TODO:brock rebrand to kcura's name
     public class IdentityServerRuntimeOptions
     {
+        public string CertificateStoreSubjectDistinguishedName { get; set; }
         public string CertificateFileName { get; set; }
         public string CertificatePassword { get; set; }
-        public ClientOptions kCuraIdentityServerClientOptions { get; set; }
 
-        internal Client kCuraIdentityServerClient
+        public string RelativityClientId { get; set; }
+        public ICollection<string> RelativityRedirectUris { get; set; }
+
+        internal Client RelativityClient
         {
             get
             {
                 return new Client
                 {
-                    ClientId = kCuraIdentityServerClientOptions.ClientId,
+                    ClientId = RelativityClientId,
                     ClientName = IdentityServerHostConstants.kCuraIdentityServerClientName,
                     AllowedGrantTypes = GrantTypes.Implicit,
                     RequireConsent = false,
-                    RedirectUris = kCuraIdentityServerClientOptions.RedirectUris,
-                    PostLogoutRedirectUris = kCuraIdentityServerClientOptions.PostLogoutRedirectUris,
+                    RedirectUris = RelativityRedirectUris,
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile
@@ -30,15 +33,6 @@ namespace IdentityServer.Host.Configuration
                 };
             }
         }
-    }
-
-    public class ClientOptions
-    {
-        public string ClientId { get; set; }
-        public ICollection<string> RedirectUris { get; set; }
-        public ICollection<string> PostLogoutRedirectUris { get; set; }
-        // TODO:kCura discuss
-        //public string LogoutUri { get; set; }
     }
 }
 

@@ -57,6 +57,7 @@ namespace IdentityServer4.Quickstart.UI
                 // simply check that username is the same as password to authenticate
                 if (model.Username == model.Password)
                 {
+                    // this issues the cookie so the token service knows who the user is
                     await HttpContext.Authentication.SignInAsync(model.Username, model.Username);
                     
                     // make sure the returnUrl is still valid, and if yes - redirect back to authorize endpoint
@@ -77,6 +78,9 @@ namespace IdentityServer4.Quickstart.UI
             var vm = await _account.BuildLoginViewModelAsync(model);
             return View(vm);
         }
+
+
+        // TODO:brock remove? -- there will be no logout support
 
         /// <summary>
         /// Show logout page

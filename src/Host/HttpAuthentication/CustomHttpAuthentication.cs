@@ -22,11 +22,11 @@ namespace Host.HttpAuthentication
             var userId = _httpContext.HttpContext.Request.Headers["userId"].FirstOrDefault() ??
                 _httpContext.HttpContext.Request.Query["userId"].FirstOrDefault();
             
-            // TODO:kCura will a customer have both cookies & custom http?
             // should we check for anon user if we use the http header?
             if (userId != null && request.Subject.Identity.IsAuthenticated == false)
             {
-                request.Subject = IdentityServerPrincipal.Create(userId, "name for:" + userId);
+                // this line is informing identityserver who the user is
+                request.Subject = IdentityServerPrincipal.Create(userId, "display name for:" + userId);
             }
 
             return Task.FromResult(new AuthorizeRequestValidationResult

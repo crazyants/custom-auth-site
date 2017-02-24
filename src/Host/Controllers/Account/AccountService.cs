@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace IdentityServer4.Quickstart.UI
 {
-    // TODO:kCura discuss
+    // TODO:brock remove/cleanup to reduce moving parts
     public class AccountService
     {
         private readonly IClientStore _clientStore;

@@ -6,6 +6,7 @@ using System;
 
 namespace IdentityServer4.Quickstart.UI
 {
+    // TODO:brock cleanup/remove as much as possible
     public class AccountOptions
     {
         public static bool AllowLocalLogin = true;

@@ -20,6 +20,7 @@ namespace Host
     {
         public IConfigurationRoot Configuration { get; }
         public IdentityServerRuntimeOptions IdentityServerOptions { get; }
+
         public Startup(IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             var builder = new ConfigurationBuilder()
@@ -30,7 +31,7 @@ namespace Host
 
             Configuration = builder.Build();
             
-            // TODO:kCura discuss config class and section names
+            // TODO:brock cleanup
             IdentityServerOptions = Configuration.Get<IdentityServerRuntimeOptions>(IdentityServerHostConstants.IdentityServerRuntimeOptionsSectionName);
 
             loggerFactory.ConfigureLogging(Configuration.GetSection(IdentityServerHostConstants.LoggingSectionName));
@@ -38,32 +39,41 @@ namespace Host
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // TODO:brock move into extension method
+            // 2 different APIs for the 2 use cases (ensure that we don't allow local logins for the http-only)
             var builder = services.
                 AddIdentityServer(ids =>
                 {
-                    // TODO:kCura discuss
+                    // TODO:brock config all of these
+                    ids.Endpoints.EnableEndSessionEndpoint = false;
+
+                    // this lets IdentityServer know the cookie middleware that was used on the login page
                     ids.Authentication.AuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
                 })
                 .AddInMemoryClients(new Client[] {
-                    IdentityServerOptions.kCuraIdentityServerClient
+                    IdentityServerOptions.RelativityClient
                 })
                 .AddInMemoryIdentityResources(new IdentityResource[] {
                     new IdentityResources.OpenId(),
                     new IdentityResources.Profile()
                 })
-                // TODO:kCura discuss if this should be config-based?
+                // TODO:brock won't do both -- do extension methods for the two diff scenario
                 .AddCustomAuthorizeRequestValidator<CustomHttpAuthentication>();
-            // TODO:kCura discuss flag to toggle mode: UI vs HTTP
             services.AddSingleton<IClientSessionService, NopClientSessionService>();
 
-            // TODO:kCura discuss
+            // TODO:brock move to extension method
             if (IdentityServerOptions.CertificateFileName != null)
             {
                 var signingCertificate = new X509Certificate2(IdentityServerOptions.CertificateFileName, IdentityServerOptions.CertificatePassword);
                 builder.AddSigningCredential(signingCertificate);
             }
+            else if (IdentityServerOptions.CertificateStoreSubjectDistinguishedName != null)
+            {
+                builder.AddSigningCredential(IdentityServerOptions.CertificateStoreSubjectDistinguishedName);
+            }
             else
             {
+                // TODO:brock document this is temp
                 builder.AddTemporarySigningCredential();
             }
 
@@ -81,7 +91,7 @@ namespace Host
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            // TODO:kCura discuss
+            // TODO:brock leave but comment re: lifetime, etc
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme,

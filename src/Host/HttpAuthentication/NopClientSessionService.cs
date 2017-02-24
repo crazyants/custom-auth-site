@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace Host.HttpAuthentication
 {
+    // nop implementation because for http-based scenarios we don't have a cookie
+    // the default IClientSessionService assumes a cookie
     public class NopClientSessionService : IClientSessionService
     {
         public Task AddClientIdAsync(string clientId)

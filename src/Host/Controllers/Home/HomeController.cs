@@ -18,6 +18,7 @@ namespace IdentityServer4.Quickstart.UI
             _interaction = interaction;
         }
 
+        // TODO:inject IHostingEnvironment, and 404 this action method if not dev mode
         public IActionResult Index()
         {
             return View();
