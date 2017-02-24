@@ -31,7 +31,6 @@ namespace Host.HttpAuthentication
 
             return Task.FromResult(new AuthorizeRequestValidationResult
             {
-                ValidatedRequest = request,
                 IsError = false
             });
         }

@@ -12,6 +12,7 @@ using System.Security.Cryptography.X509Certificates;
 using IdentityServer4;
 using IdentityServer4.Models;
 using Host.HttpAuthentication;
+using IdentityServer4.Services;
 
 namespace Host
 {
@@ -52,6 +53,8 @@ namespace Host
                 })
                 // TODO:kCura discuss if this should be config-based?
                 .AddCustomAuthorizeRequestValidator<CustomHttpAuthentication>();
+            // TODO:kCura discuss flag to toggle mode: UI vs HTTP
+            services.AddSingleton<IClientSessionService, NopClientSessionService>();
 
             // TODO:kCura discuss
             if (IdentityServerOptions.CertificateFileName != null)
