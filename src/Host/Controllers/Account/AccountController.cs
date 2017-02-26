@@ -2,47 +2,47 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 using IdentityServer4.Services;
-using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using IdentityServer.Host.Configuration;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace IdentityServer4.Quickstart.UI
 {
-    /// <summary>
-    /// This sample controller implements a typical login/logout/provision workflow for local and external accounts.
-    /// The login service encapsulates the interactions with the user data store. This data store is in-memory only and cannot be used for production!
-    /// The interaction service provides a way for the UI to communicate with identityserver for validation and context retrieval
-    /// </summary>
     [SecurityHeaders]
     public class AccountController : Controller
     {
+        private readonly IdentityServerOptions _options;
         private readonly IIdentityServerInteractionService _interaction;
-        private readonly AccountService _account;
-        private readonly ILogger<AccountController> _logger;
 
         public AccountController(
-            IIdentityServerInteractionService interaction,
-            IClientStore clientStore,
-            IHttpContextAccessor httpContextAccessor,
-            ILogger<AccountController> logger)
+            IdentityServerOptions options,
+            IIdentityServerInteractionService interaction)
         {
+            _options = options;
             _interaction = interaction;
-            _account = new AccountService(interaction, httpContextAccessor, clientStore);
-            _logger = logger;
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            if (_options.AllowLocalLogin == false)
+            {
+                context.Result = new NotFoundResult();
+            }
         }
 
         /// <summary>
         /// Show login page
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> Login(string returnUrl)
+        public IActionResult Login(string returnUrl)
         {
-            // _logger.LogDebug( "Login called" );
-            var vm = await _account.BuildLoginViewModelAsync(returnUrl);
-            return View(vm);
+            return View(new LoginModel
+            {
+                ReturnUrl = returnUrl
+            });
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace IdentityServer4.Quickstart.UI
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginInputModel model)
+        public async Task<IActionResult> Login(LoginModel model)
         {
             if (ModelState.IsValid)
             {
@@ -59,7 +59,7 @@ namespace IdentityServer4.Quickstart.UI
                 {
                     // this issues the cookie so the token service knows who the user is
                     await HttpContext.Authentication.SignInAsync(model.Username, model.Username);
-                    
+
                     // make sure the returnUrl is still valid, and if yes - redirect back to authorize endpoint
                     if (_interaction.IsValidReturnUrl(model.ReturnUrl))
                     {
@@ -75,12 +75,8 @@ namespace IdentityServer4.Quickstart.UI
             }
 
             // something went wrong, show form with error
-            var vm = await _account.BuildLoginViewModelAsync(model);
-            return View(vm);
+            return View(model);
         }
-
-
-        // TODO:brock remove? -- there will be no logout support
 
         /// <summary>
         /// Show logout page
@@ -88,15 +84,16 @@ namespace IdentityServer4.Quickstart.UI
         [HttpGet]
         public async Task<IActionResult> Logout(string logoutId)
         {
-            var vm = await _account.BuildLogoutViewModelAsync(logoutId);
+            var model = new LogoutModel { LogoutId = logoutId };
 
-            if (vm.ShowLogoutPrompt == false)
+            var context = await _interaction.GetLogoutContextAsync(logoutId);
+            if (!context.ShowSignoutPrompt)
             {
                 // no need to show prompt
-                return await Logout(vm);
+                return await Logout(model);
             }
 
-            return View(vm);
+            return View(model);
         }
 
         /// <summary>
@@ -104,14 +101,20 @@ namespace IdentityServer4.Quickstart.UI
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout(LogoutInputModel model)
+        public async Task<IActionResult> Logout(LogoutModel model)
         {
-            var vm = await _account.BuildLoggedOutViewModelAsync(model.LogoutId);
-
             // delete local authentication cookie
             await HttpContext.Authentication.SignOutAsync();
 
-            return View("LoggedOut", vm);
+            var context = await _interaction.GetLogoutContextAsync(model.LogoutId);
+
+            return View("LoggedOut", new LoggedOutModel
+            {
+                ClientName = context?.ClientId,
+                PostLogoutRedirectUri = context?.PostLogoutRedirectUri,
+                SignOutIframeUrl  = context?.SignOutIFrameUrl,
+                AutomaticRedirectAfterSignOut = true
+            });
         }
     }
 }

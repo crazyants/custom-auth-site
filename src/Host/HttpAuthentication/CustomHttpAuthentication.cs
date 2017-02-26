@@ -1,9 +1,7 @@
-﻿using IdentityServer4;
+﻿using IdentityServer.Host.Configuration;
+using IdentityServer4;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Host.HttpAuthentication
@@ -11,28 +9,28 @@ namespace Host.HttpAuthentication
     public class CustomHttpAuthentication : ICustomAuthorizeRequestValidator
     {
         private readonly IHttpContextAccessor _httpContext;
+        private readonly IdentityServerOptions _options;
 
-        public CustomHttpAuthentication(IHttpContextAccessor httpContext)
+        public CustomHttpAuthentication(IHttpContextAccessor httpContext, IdentityServerOptions options)
         {
             _httpContext = httpContext;
+            _options = options;
         }
 
-        public Task<AuthorizeRequestValidationResult> ValidateAsync(ValidatedAuthorizeRequest request)
+        public async Task<AuthorizeRequestValidationResult> ValidateAsync(ValidatedAuthorizeRequest request)
         {
-            var userId = _httpContext.HttpContext.Request.Headers["userId"].FirstOrDefault() ??
-                _httpContext.HttpContext.Request.Query["userId"].FirstOrDefault();
+            var userId = await _options.HttpLoginCallback?.Invoke(_httpContext.HttpContext);
             
-            // should we check for anon user if we use the http header?
-            if (userId != null && request.Subject.Identity.IsAuthenticated == false)
+            if (userId != null)
             {
                 // this line is informing identityserver who the user is
-                request.Subject = IdentityServerPrincipal.Create(userId, "display name for:" + userId);
+                request.Subject = IdentityServerPrincipal.Create(userId, userId);
             }
 
-            return Task.FromResult(new AuthorizeRequestValidationResult
+            return new AuthorizeRequestValidationResult
             {
                 IsError = false
-            });
+            };
         }
     }
 }

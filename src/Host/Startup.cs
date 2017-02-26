@@ -8,18 +8,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using IdentityServer.Host.Configuration;
 using IdentityServer.Host;
-using System.Security.Cryptography.X509Certificates;
 using IdentityServer4;
-using IdentityServer4.Models;
-using Host.HttpAuthentication;
-using IdentityServer4.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace Host
 {
     public class Startup
     {
         public IConfigurationRoot Configuration { get; }
-        public IdentityServerRuntimeOptions IdentityServerOptions { get; }
 
         public Startup(IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
@@ -31,51 +27,18 @@ namespace Host
 
             Configuration = builder.Build();
             
-            // TODO:brock cleanup
-            IdentityServerOptions = Configuration.Get<IdentityServerRuntimeOptions>(IdentityServerHostConstants.IdentityServerRuntimeOptionsSectionName);
-
             loggerFactory.ConfigureLogging(Configuration.GetSection(IdentityServerHostConstants.LoggingSectionName));
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // TODO:brock move into extension method
-            // 2 different APIs for the 2 use cases (ensure that we don't allow local logins for the http-only)
-            var builder = services.
-                AddIdentityServer(ids =>
-                {
-                    // TODO:brock config all of these
-                    ids.Endpoints.EnableEndSessionEndpoint = false;
-
-                    // this lets IdentityServer know the cookie middleware that was used on the login page
-                    ids.Authentication.AuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
-                })
-                .AddInMemoryClients(new Client[] {
-                    IdentityServerOptions.RelativityClient
-                })
-                .AddInMemoryIdentityResources(new IdentityResource[] {
-                    new IdentityResources.OpenId(),
-                    new IdentityResources.Profile()
-                })
-                // TODO:brock won't do both -- do extension methods for the two diff scenario
-                .AddCustomAuthorizeRequestValidator<CustomHttpAuthentication>();
-            services.AddSingleton<IClientSessionService, NopClientSessionService>();
-
-            // TODO:brock move to extension method
-            if (IdentityServerOptions.CertificateFileName != null)
-            {
-                var signingCertificate = new X509Certificate2(IdentityServerOptions.CertificateFileName, IdentityServerOptions.CertificatePassword);
-                builder.AddSigningCredential(signingCertificate);
-            }
-            else if (IdentityServerOptions.CertificateStoreSubjectDistinguishedName != null)
-            {
-                builder.AddSigningCredential(IdentityServerOptions.CertificateStoreSubjectDistinguishedName);
-            }
-            else
-            {
-                // TODO:brock document this is temp
-                builder.AddTemporarySigningCredential();
-            }
+            var options = Configuration.Get<IdentityServerOptions>(IdentityServerHostConstants.IdentityServerOptionsSectionName);
+            //options.HttpLoginCallback = ctx =>
+            //{
+            //    var userId = ctx.Request.Query["userId"].FirstOrDefault();
+            //    return Task.FromResult(userId);
+            //};
+            services.AddCustomIdentityServer(options);
 
             services.AddMvc();
         }
@@ -91,10 +54,11 @@ namespace Host
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            // TODO:brock leave but comment re: lifetime, etc
+            // a cookie is used to track the user's session at IdentityServer
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme,
+                LogoutPath = new PathString("/Account/Logout")
             });
 
             app.UseIdentityServer();

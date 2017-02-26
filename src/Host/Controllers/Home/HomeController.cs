@@ -3,6 +3,7 @@
 
 
 using IdentityServer4.Services;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -12,16 +13,22 @@ namespace IdentityServer4.Quickstart.UI
     public class HomeController : Controller
     {
         private readonly IIdentityServerInteractionService _interaction;
+        private readonly IHostingEnvironment _host;
 
-        public HomeController(IIdentityServerInteractionService interaction)
+        public HomeController(IIdentityServerInteractionService interaction, IHostingEnvironment host)
         {
             _interaction = interaction;
+            _host = host;
         }
 
-        // TODO:inject IHostingEnvironment, and 404 this action method if not dev mode
         public IActionResult Index()
         {
-            return View();
+            if (_host.IsDevelopment())
+            {
+                return View();
+            }
+
+            return NotFound();
         }
 
         /// <summary>

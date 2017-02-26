@@ -21,6 +21,7 @@ namespace Client.Controllers
         public IActionResult Logout()
         {
             var url = Url.Action("Index", "Home");
+            // remove "oidc" if only using http-based signin
             return SignOut(new AuthenticationProperties { RedirectUri = url }, "oidc", "Cookies");
         }
 
