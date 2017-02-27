@@ -6,19 +6,19 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using IdentityServer.Host.Configuration;
 using Microsoft.AspNetCore.Mvc.Filters;
+using RelativityAuthenticationBridge.Configuration;
 
-namespace IdentityServer4.Quickstart.UI
+namespace RelativityAuthenticationBridge.UI
 {
     [SecurityHeaders]
     public class AccountController : Controller
     {
-        private readonly IdentityServerOptions _options;
+        private readonly RelativityAuthenticationBridgeOptions _options;
         private readonly IIdentityServerInteractionService _interaction;
 
         public AccountController(
-            IdentityServerOptions options,
+            RelativityAuthenticationBridgeOptions options,
             IIdentityServerInteractionService interaction)
         {
             _options = options;

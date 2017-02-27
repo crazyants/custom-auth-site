@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace IdentityServer4.Quickstart.UI
+namespace RelativityAuthenticationBridge.UI
 {
     [SecurityHeaders]
     public class HomeController : Controller

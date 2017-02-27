@@ -4,10 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace IdentityServer.Host.Configuration
+namespace RelativityAuthenticationBridge.Configuration
 {
-    // TODO:brock rebrand to kcura's name
-    public class IdentityServerOptions
+    public class RelativityAuthenticationBridgeOptions
     {
         public bool AllowLocalLogin => HttpLoginCallback == null;
         public Func<HttpContext, Task<string>> HttpLoginCallback { get; set; }

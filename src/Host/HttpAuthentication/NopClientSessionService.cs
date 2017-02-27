@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Host.HttpAuthentication
+namespace RelativityAuthenticationBridge.HttpAuthentication
 {
     // nop implementation because for http-based scenarios we don't have a cookie
     // the default IClientSessionService assumes a cookie

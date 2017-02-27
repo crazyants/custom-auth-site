@@ -1,21 +1,21 @@
-﻿using Host.HttpAuthentication;
-using IdentityServer.Host;
-using IdentityServer.Host.Configuration;
-using IdentityServer4;
+﻿using IdentityServer4;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
+using RelativityAuthenticationBridge;
+using RelativityAuthenticationBridge.Configuration;
+using RelativityAuthenticationBridge.HttpAuthentication;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
-        static Client CrateRelativityClient(IdentityServerOptions options)
+        static Client CrateRelativityClient(RelativityAuthenticationBridgeOptions options)
         {
             return new Client
             {
                 ClientId = options.RelativityClientId,
-                ClientName = IdentityServerHostConstants.kCuraIdentityServerClientName,
+                ClientName = RelativityAuthenticationBridgeConstants.RelativityClientName,
                 AllowedGrantTypes = GrantTypes.Implicit,
                 RequireConsent = false,
                 RedirectUris = options.RelativityRedirectUris,
@@ -27,7 +27,7 @@ namespace Microsoft.Extensions.DependencyInjection
             };
         }
 
-        public static IServiceCollection AddCustomIdentityServer(this IServiceCollection services, IdentityServerOptions options)
+        public static IServiceCollection AddRelativityAuthenticationBridge(this IServiceCollection services, RelativityAuthenticationBridgeOptions options)
         {
             services.AddSingleton(options);
 

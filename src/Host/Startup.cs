@@ -6,12 +6,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Hosting;
-using IdentityServer.Host.Configuration;
-using IdentityServer.Host;
 using IdentityServer4;
 using Microsoft.AspNetCore.Http;
+using RelativityAuthenticationBridge.Configuration;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Host
+namespace RelativityAuthenticationBridge
 {
     public class Startup
     {
@@ -20,25 +21,34 @@ namespace Host
         public Startup(IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             var builder = new ConfigurationBuilder()
-             .SetBasePath(env.ContentRootPath)
-             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-             .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-             .AddEnvironmentVariables();
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
 
             Configuration = builder.Build();
             
-            loggerFactory.ConfigureLogging(Configuration.GetSection(IdentityServerHostConstants.LoggingSectionName));
+            loggerFactory.ConfigureLogging(Configuration.GetSection(RelativityAuthenticationBridgeConstants.LoggingSectionName));
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var options = Configuration.Get<IdentityServerOptions>(IdentityServerHostConstants.IdentityServerOptionsSectionName);
+            var options = Configuration.Get<RelativityAuthenticationBridgeOptions>(RelativityAuthenticationBridgeConstants.OptionsSectionName);
+
+            // set the HttpLoginCallback if the identification of the user authentication is 
+            // to be determined via a value in the HTTP request itself (such as a header)
+            // if this is not set, then the login UI is used. if this is set, then the login UI is disabled.
             //options.HttpLoginCallback = ctx =>
             //{
+            //    // this is an example of performing user authentication based
+            //    // on something custom in the HTTP request -- perhaps a header value
+            //    // that was emitted from an upstream proxy server that has already 
+            //    // authenticated the user. 
             //    var userId = ctx.Request.Query["userId"].FirstOrDefault();
             //    return Task.FromResult(userId);
             //};
-            services.AddCustomIdentityServer(options);
+
+            services.AddRelativityAuthenticationBridge(options);
 
             services.AddMvc();
         }
