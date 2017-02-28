@@ -1,4 +1,6 @@
-﻿using IdentityServer4;
+﻿// © 2017, kCura LLC 
+
+using IdentityServer4;
 using IdentityServer4.Validation;
 using Microsoft.AspNetCore.Http;
 using RelativityAuthenticationBridge.Configuration;

@@ -1,4 +1,6 @@
-﻿namespace Microsoft.Extensions.Logging
+﻿// © 2017, kCura LLC 
+
+namespace Microsoft.Extensions.Logging
 {
     public class LoggingOptions
     {

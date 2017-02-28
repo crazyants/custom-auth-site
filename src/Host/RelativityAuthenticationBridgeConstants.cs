@@ -1,4 +1,6 @@
-﻿namespace RelativityAuthenticationBridge
+﻿// © 2017, kCura LLC 
+
+namespace RelativityAuthenticationBridge
 {
     public class RelativityAuthenticationBridgeConstants
     {

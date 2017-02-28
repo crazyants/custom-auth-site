@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿// © 2017, kCura LLC 
+
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

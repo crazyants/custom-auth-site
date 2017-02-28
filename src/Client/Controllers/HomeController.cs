@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿// © 2017, kCura LLC 
+
+using Microsoft.AspNetCore.Mvc;
 
 namespace Client.Controllers
 {

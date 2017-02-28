@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿// © 2017, kCura LLC 
+
+using System.IO;
 using Microsoft.AspNetCore.Hosting;
 
 namespace Client

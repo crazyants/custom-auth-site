@@ -1,4 +1,6 @@
-﻿namespace Microsoft.Extensions.Configuration
+﻿// © 2017, kCura LLC 
+
+namespace Microsoft.Extensions.Configuration
 {
     public static class ConfigurationExtensions
     {

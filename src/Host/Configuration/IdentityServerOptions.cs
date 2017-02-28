@@ -1,4 +1,5 @@
-﻿
+﻿// © 2017, kCura LLC 
+
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;

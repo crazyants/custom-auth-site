@@ -1,4 +1,6 @@
-﻿using IdentityServer4.Services;
+﻿// © 2017, kCura LLC 
+
+using IdentityServer4.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

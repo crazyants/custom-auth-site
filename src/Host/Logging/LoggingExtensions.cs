@@ -1,4 +1,6 @@
-﻿using Serilog;
+﻿// © 2017, kCura LLC 
+
+using Serilog;
 using Microsoft.Extensions.Configuration;
 using Serilog.Events;
 using System;
