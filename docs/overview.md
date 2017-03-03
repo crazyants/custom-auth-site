@@ -1,7 +1,7 @@
 # kCura Relativity Authentication Bridge
 
 The kCura Relativity Authentication Bridge allows you to determine how users authenticate to Relativity.
-This is typically needed when you already have a custom authentication solution for your users or have some other custom authentication requirement that is beyong what Relativity supports.
+This is typically needed when you already have a custom authentication solution for your users or have some other custom authentication requirement that is beyond what Relativity supports.
 
 ## Overview
 
