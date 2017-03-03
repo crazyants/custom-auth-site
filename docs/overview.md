@@ -30,7 +30,7 @@ The authentication workflow follows these steps:
 
 ## User Id
 
-The user id that the Relativity Authentication Bridge uses must be unique, consistent, and never reused for any other user.
+The user id that the Relativity Authentication Bridge issues must be unique, consistent, and never reused for any other user.
 
 ## Authentication Scenarios
 
@@ -39,6 +39,8 @@ There are two custom authentication scenarios that the Relativity Authentication
 * Interactive Login
 * HTTP-based Login
 
+Only one scenario may be enabled at a time. The Relativity Authentication Bridge defaults to the interactive login scenario.
+
 ### Interactive Login
 
 Interactive login is designed to display a custom login form to the user. 
@@ -46,8 +48,29 @@ This custom login form will then accept and validate the user's credentials.
 If successful, then the login form will issue a cookie that contains the user's id. 
 IdentityServer uses this cookie to then send a OpenID Connect authentication response to Relativity.
 
+#### Custom Code for Interactive Login
+
+The code for the interactive login is in the `AccountController` in the sample code (in ~/Controllers/AccountController.cs).
+
+There is a `Login` action method that displays the login view, and then posts back to another `Login` action method that accepts the username and password in the `LoginModel`. 
+Your custom logic would replace the default authentication check that's being performed in the sample.
+Once your custom logic has authenticated the user you must invoke `await HttpContext.Authentication.SignInAsync` to issue the cookie for IdentityServer. 
+The first parameter is the user id, and the second parameter is intended for the user's display name but is unused in this sample.
+Once the cookie has been issued, the user is then redriected back into IdentityServer after checking that the URL is valid via the call to `IsValidReturnUrl`.
+
 ### HTTP-based Login
 
 The HTTP-based login is designed for the scenario when the user authentication has already been performed elsewhere and a value in the HTTP request is used to identify the user's id.
 Custom logic is then written to extract the user's id from the HTTP request.
 This user id is then presented to IdentityServer to send a OpenID Connect authentication response to Relativity.
+
+#### Custom Code for HTTP-based Login
+
+The code for the HTTP-based login is a simple callback function that accepts as an input the `HttpContect` and returns a `string` for the user id for the authenticated user (or `null` if the callback can't determine the user from the HTTP request).
+
+This callback function is configured via the `HttpLoginCallback` property on the `RelativityAuthenticationBridgeOptions` class. 
+This class is used during application startup to configure IdentityServer. 
+This configuration occurs in the `ConfigureServices` method in the `Startup` class (in ~/Startup.cs).
+If `HttpLoginCallback` is set, then the interactive login will be disabled and only HTTP-based logins will be allowed.
+
+Note that the `HttpLoginCallback` returns `Task<string>`, thus it supports asychronous operations.
