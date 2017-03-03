@@ -58,12 +58,12 @@ There is a `Login` action method that displays the login view, and then posts ba
 Your custom logic would replace the default authentication check that's being performed in the sample.
 Once your custom logic has authenticated the user you must invoke `await HttpContext.Authentication.SignInAsync` to issue the cookie for IdentityServer. 
 The first parameter is the user id, and the second parameter is intended for the user's display name but is unused in this sample.
-Once the cookie has been issued, the user is then redriected back into IdentityServer after checking that the URL is valid via the call to `IsValidReturnUrl`.
+Once the cookie has been issued, the user is then redirected back into IdentityServer (after checking that the URL is valid via the call to `IsValidReturnUrl`).
 
 ### HTTP-based Login
 
-The HTTP-based login is designed for the scenario when the user authentication has already been performed elsewhere and a value in the HTTP request is used to identify the user's id.
-Custom logic is then written to extract the user's id from the HTTP request.
+The HTTP-based login is designed for the scenario when the user authentication has already been performed elsewhere and a value in the HTTP request is used to identify the user.
+Custom logic is then written to determine the user id from the HTTP request.
 This user id is then presented to IdentityServer to send a OpenID Connect authentication response to Relativity.
 
 #### Custom Code for HTTP-based Login
