@@ -32,7 +32,34 @@ Some customers \need the ability to authenticate based on the content of the HTT
 
 ## Running the Demo
 
-TODO:  Describe how to download and run the solution 
+This repository comes with a standalone sample of how to use the custom auth
+site.  In this sample we will use a simple, standalone MVC web app instead of
+Relativity.  
+
+1) Clone the repo and open the custom-auth-site.sln solution in the root folder
+
+2) Build and run both the Client and Host projects  You should see a console
+window for the host project with an indicator: "Now listening on:
+http://localhost:5000".  Your browser should open to the Client MVC website,
+which will show that you are not logged in.
+
+3) Click the Login button on the MVC site.  You will be redirected to a login
+form hosted by the Host (custom auth site) project.
+
+4) Enter a value for username and password.  The demo site is configured to
+verify that the username and password are the same value.  If both inputs are
+the same, the custom auth site considers the user authenticated.
+
+5) Upon authenticating successfully, you will be directed back to the MVC
+site.  You should now see a list of user claims, which indicates that you are
+successfully authenticated.
+
+6) You can click the logout button at any time and restart the process.
+
+Now that you have a working custom auth site, you can customize the login
+process to meet your organization's auth requirements and perform local
+testing outside of Relativity.  Once you are done, the custom auth site can be
+deployed to a Relativity server and connected to your Relativity instance.
 
 # Architecture Overview
 
@@ -82,7 +109,12 @@ Once the framework and hosting bundle have been installed, you will need to crea
 
 1) Download the repository from GitHub.
 
-2) Generate a binary release for the custom auth site.  Within Visual Studio you can do this by opening the TODO solution file; creating a publish profile to publish files to disk; and running the publish command from within Visual Studio.  This will generate a set of files that can be deployed to the IIS application root on the web server (which we will create shortly).
+2) Generate a binary release for the custom auth site.  Within Visual Studio
+you can do this by opening the TODO solution file; creating a publish profile
+to publish files to disk; and running the publish command from within Visual
+Studio.  This will generate a set of files that can be deployed to the IIS
+application root on the web server (which we will create later in these
+instructions).
  
 3) Create a new Application Pool named "AspNetCore".  For the Managed Runtime setting choose "No managed runtime."  For now we will leave the Application Pool to run under the ApplicationPoolIdenttiy virtual user.
 
@@ -231,7 +263,18 @@ provider.
 
 ## Home Realm Discovery Hint
 
-TODO:  Expand on this:
+By default, Relativity will always shows the main login page with a button
+pointing to your custom auth site.  Users must click the button in order to be
+redirected.
+
+If you would like users to be automatically redirected to your custom auth
+site, you can include a Home Realm Discovery hint in any links or bookmarks to
+Relativity.  If a link to Relativity contains the appropriate HRD hint in the query string,
+Relativity will automatically forward the user to the custom auth site without
+showing the Relativity login page.
+
+You can learn more about HRD hints at the following URL:
+
 <https://help.kcura.com/9.5/Content/Relativity/Authentication/Federated_instances.htm>
 
 ## IIS Configuration
