@@ -126,7 +126,31 @@ point at a location that makes sense for your environment.  Also make sure
 that the AppPool\AspNetCore user has write permissions to the logging folder.
 
 
+## Testing the IIS Setup
+
+You can verify that IIS and your new application is set up correctly by
+hitting the following URL:
+
+If everything is working, you should see the OpenID Connect discovery
+endpoint, which is a JSON document with information about the OIDC endpoint.
+If there is a problem, you will receive a server error.  For development and
+testing purposes, you can turn on verbose error pages.
+
+1) Navigate to the application in IIS Manager amd highlight the custom auth site
+2) Open the IIS Configuration Editor
+3) Select the "system.webServer/aspNetCore" section at the top
+4) Modify the environmentVariables row and add an environemnt variable with
+the name "ASPNETCORE_ENVIRONMENT" and a value of "Development".
+
+Recycle the Relativity website in IIS after changing the environment
+variables.  Be sure to disable this environment variable in a production
+setting.
+
+
 ## Relativity Setup
+
+TODO:  Expand on this:
+<https://help.kcura.com/9.5/Content/Relativity/Authentication/Authentication.htm>
 
 ## Custom Auth Site Setup
 
@@ -143,12 +167,76 @@ that the AppPool\AspNetCore user has write permissions to the logging folder.
 
 # Additional Considerations
 
+## TLS
+
+The OpenID Connect system requires TLS (SSL) in order to be secure.  This is
+because sensitive information is exchanged between Relativity, the custom auth
+site, and the browser.  Administrators are encouraged to make sure their
+Relativity environments are secured via TLS - even if those environments are
+not directly exposed to the internet.
+
 ## Certificate Management
+
+As covered previously, the custom auth site requires an X.509 certificate for
+signing tokens.  In an production scenario the recommendation is to store that
+certificate in the web server's certificate store, which is the standard
+location for certificates on the Windows OS.
+
+The custom auth site can be customized to look for a certificate in the
+machine store.  Add a new setting to appsettings.json called 
+"relativityAuthenticationBridgeOptions.CertificateStoreThumbnail" and set the
+value to the thumbprint of the certificate you want to use.  The custom auth
+site will automatically look in the Machine Store / Personal Store for a
+matching certificate.
+
+Self-signed certificates can be easily generated using OpenSSL or PowerShell.
+There are many tutorials on the web that describe how to generate self-signed
+certificates using these tools.
+
+Use the Certificates MMC snap-in to install the certificate into the Machine
+Store under the Personal folder.  Two critical configuration steps include:
+
+- Mark the private key as exportable when installing the cert into the
+machine store
+
+- Set the ACLs on the certificate private key so the AppPool\AspNetCore
+virtual user can read the private key
 
 ## Logging
 
+The custom auth site uses the Serilog logging library.  This library is
+well-known in the .NET community and is highly-configurable.  The default
+logging setup is to log to the console as well as a log file.  You can
+customize the logging by modifying the
+Configuration\ServiceCollectionExtensions.cs file in the Host solution.
+
+You can refer to the Serilog website for more information on how to configure
+Serilog:
+
+<https://github.com/serilog/serilog>
+
+
 ## Clean Up Relativity Login Methods
 
+Once you have the custom auth site working, you probably want your Relativity
+users to only log in using the new site.  You can remove other login methods
+from user accounts or disable entire classes of login such as passwords.
+
+To disable login methods for individual users, go to the Login Methods list
+for the user and remove all methods except the method for the custom auth
+site.  To completely disable a particular type of authentication (i.e.
+password), go to the appropriate Authentication Provider and disable that
+provider.
 
 
+## Home Realm Discovery Hint
 
+TODO:  Expand on this:
+<https://help.kcura.com/9.5/Content/Relativity/Authentication/Federated_instances.htm>
+
+## IIS Configuration
+
+This guide describes the general procedure for configuring an ASP.Net Core
+applciation.  Administrators should customize and secure the IIS setup for their particular
+environment.  Always follow your organization's best practices for IIS website configuration and
+security.
