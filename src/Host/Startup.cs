@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using RelativityAuthenticationBridge.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace RelativityAuthenticationBridge
 {
@@ -68,9 +69,10 @@ namespace RelativityAuthenticationBridge
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme,
-                LogoutPath = new PathString("/Account/Logout")
+                LogoutPath = new PathString("/Account/Logout"),
+								ExpireTimeSpan = TimeSpan.FromMinutes(2)
             });
-
+						
             app.UseIdentityServer();
 
             app.UseStaticFiles();
