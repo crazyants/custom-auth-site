@@ -102,7 +102,10 @@ convenient value based on what is available within your network.
 
 ## Windows Server Setup
 
-The recommended way to host the custom auth site is within IIS.  You can install the custom auth site in a separate IIS application within the same website as Relativity.  For the typical customer, each web server should have a copy of the cusotm auth site installed.
+The recommended way to host the custom auth site is within IIS.  You can
+install the custom auth site in a separate IIS application within the same
+website as Relativity.  For the typical customer, each web server should have
+a copy of the custom auth site installed.
 
 ### .NET Core
 
@@ -127,13 +130,14 @@ Once the framework and hosting bundle have been installed, you will need to crea
 1) Download the repository from GitHub.
 
 2) Generate a binary release for the custom auth site.  Within Visual Studio
-you can do this by opening the TODO solution file; creating a publish profile
+you can do this by opening the custom auth site solution file; creating a publish profile
 to publish files to disk; and running the publish command from within Visual
 Studio.  This will generate a set of files that can be deployed to the IIS
 application root on the web server (which we will create later in these
 instructions).
  
-3) Create a new Application Pool named "AspNetCore".  For the Managed Runtime setting choose "No managed runtime."  For now we will leave the Application Pool to run under the ApplicationPoolIdenttiy virtual user.
+3) Create a new Application Pool named "AspNetCore".  For the .NET Framework
+setting choose "No managed code."  For now we will leave the Application Pool to run under the ApplicationPoolIdentiy virtual user.
 
 4) Create a folder to hold all of the custom auth site web files.  This will be the web root directory.  Copy the files from Step 2 into this folder.
 
@@ -216,7 +220,7 @@ Some settings that apply to the custom auth site specifically:
 appsettings.json file and can be customized if desired)
 
 - Authority URL should be set to the base URL of the IIS application you
-created for the cusotm auth site
+created for the custom auth site
 
 - Site URL should be the base URL for your Relativity instance.  Use the URL
 your browser clients will use to access Relativity, not a private server name
@@ -399,7 +403,7 @@ from user accounts or disable entire classes of login such as passwords.
 To disable login methods for individual users, go to the Login Methods list
 for the user and remove all methods except the method for the custom auth
 site.  To completely disable a particular type of authentication (i.e.
-password), go to the appropriate Authentication Provider and disable that
+password), go to the appropriate Authentication Provider and remove that
 provider.
 
 
