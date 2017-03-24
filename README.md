@@ -294,17 +294,52 @@ or updating the Authentication Provider in Relativity
 - Verify the ACLs on the web folder, log directory, and certificate
 
 
-# Source Code Overview
-
-
 # Customizing the Solution
+
+Every customer who uses the custom auth site should modify the code to meet
+the needs of the target environment.  Developers should browse the source code
+and familiarize themselves with the entire solution.
+
+Developers will focus their attention on different parts of the code,
+depending on the type of authentication scheme desired.
 
 ## Login Form Customization
 
+If you are creating your own interactive login form, you will want to focus
+your customizations on the Controllers and Views folders.  The custom auth
+site acts as a standard ASP.Net Core MVC website.  You can write views and
+controllers to display whatever UI you desire to the end user.  The sample
+login form that comes with the repo should give you a starting place for
+learning and building a custom login form.
+
+Developers can learn more about ASP.Net Core and MVC at the following link:
+
+<https://www.asp.net/core>
+
+
 ## HTTP Request Customization
+
+If you want to authenticate users based on the HTTP request, there are two
+steps to take.
+
+First, delete the Controllers\Account and Views\Account folders - you will not
+need them since there will be no login form.
+
+Next, look in the Startup.cs file and the ConfigureServices method.  In there
+you will see commented-out code that demonstrates how to authenticate the user
+based on an HTTP header.
+
+The RelativityAuthenticationBridgeOptions.HttpLoginCallback property allows
+you to define a delegate that gets called for each HTTP request.  Within this
+delegate you can inspect the HTTP request, e.g. all of the headers, the
+request URL, source IP address, etc.  In this delegate you should write your
+custom logic to validate the user.
 
 
 # Additional Considerations
+
+Once you have the custom auth site hosted in IIS and customize to your needs,
+there are some additional things to consider before going into production.
 
 ## TLS
 
