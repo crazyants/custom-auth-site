@@ -1,8 +1,15 @@
-# Introduction
+# custom-auth-site
 
-The Custom Auth Site is an authentication toolkit designed to help Relativity customers.  Relativity ships with a certain set of authentication capabilities built-in to the software.  Relativity also supports single sign-on via the OpenID and SAML2 protocols.  However, sometimes customers have specialized requirements that cannot be met with any of the built-in features.
+Project Champion - [Solliance](http://solliance.net):  The Custom Auth Site is an authentication toolkit designed to help Relativity customers.  Relativity ships with a certain set of authentication capabilities built-in to the software.  Relativity also supports single sign-on via the OpenID and SAML2 protocols.  However, sometimes customers have specialized requirements that cannot be met with any of the built-in features.
 
-This Custom Auth Site works with Relativity's SSO feature to extend the authentication capabilities of the product.  The site is delivered as a template - on open-sourfce project that your team can easily customize to meet the needs of your organization.
+This Custom Auth Site works with Relativity's SSO feature to extend the authentication capabilities of the product.  The site is delivered as a template - on open-source project that your team can easily customize to meet the needs of your organization.
+
+While this is an open source project on the Relativity GitHub account, support is only available through the Relativity developer community. You are welcome to use the code and solution as you see fit within the confines of the license it is released under. However, if you are looking for support or modifications to the solution, we suggest reaching out to the Project Champion listed below.
+
+# Project Champion 
+![Solliance](http://solliance.net/images/solliance-master.svg "Solliance")
+
+[Solliance](http://solliance.net) is a major contributor to this project.  If you are interested in having modifications made to this project, please reach out to [Solliance](http://solliance.net) for an estimate. 
 
 ## Use Cases
 
